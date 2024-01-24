@@ -1,0 +1,7 @@
+/* CSS for the loading animation */
+#loader {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

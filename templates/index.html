@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>FlipkartGrid 5.0</title>
+        <style>
+        /* Your existing CSS styles */
+
+        /* Loading animation */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto';
+      font-size: 16px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      justify-content: center;
+      background : url("/static/images/bg_main.jpg");
+    }
+
+    .carousel {
+<!--      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);-->
+      padding: 20px;
+      perspective: 500px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      zoom: 1.2;
+    }
+
+    .carousel > * {
+<!--    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);-->
+      flex: 0 0 auto;
+    }
+    .carousel nav {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px; /* Add margin-bottom to create space between the search box and the image carousel */
+    }
+    .carousel figure {
+<!--    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);-->
+      margin: 0;
+      width: 550px;
+      transform-style: preserve-3d;
+      transition: transform 0.5s;
+      transform-origin: 50% 50% -482.8427124746px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px; /* Add margin-top to create space between the search box and the image carousel */
+    }
+
+    .carousel figure img {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0 79px;
+      opacity: 0.95;
+      transform-origin: center center;
+    }
+
+    .carousel figure img:not(:first-of-type) {
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform-origin: 50% 50% -482.8427124746px;
+    }
+
+    .carousel figure img:nth-child(2) {
+      transform: rotateY(0.7853981634rad);
+    }
+
+    .carousel figure img:nth-child(3) {
+      transform: rotateY(1.5707963268rad);
+    }
+
+    .carousel figure img:nth-child(4) {
+      transform: rotateY(2.3561944902rad);
+    }
+
+    .carousel figure img:nth-child(5) {
+      transform: rotateY(3.1415926536rad);
+    }
+
+    .carousel figure img:nth-child(6) {
+      transform: rotateY(3.926990817rad);
+    }
+
+    .carousel figure img:nth-child(7) {
+      transform: rotateY(4.7123889804rad);
+    }
+
+    .carousel figure img:nth-child(8) {
+      transform: rotateY(5.4977871438rad);
+    }
+
+    /* .carousel nav {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0 0;
+    } */
+
+  </style>
+</head>
+<style>
+    :root
+    {
+        --bg-black-100:#353535;
+        --bg-black-50:#eef0f4;
+        --bg-black-20:#414546;
+    }
+    *
+    {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body
+    {
+        overflow: auto;
+    }
+    body.dark
+    {
+        --bg-black-100:#fff;
+        --bg-black-50:#000;
+        --bg-black-20:#eef0f4;
+    }
+    .menu
+    {
+        position: absolute;
+        width: 60px;
+        height: 600px;
+        background-color: var(--bg-black-50);
+        z-index: 2;
+        top: 0;
+        bottom: 0;
+        left: 10px;
+        margin: auto;
+        border-radius: 0.8rem;
+        transition: 0.3s ease 0.15s;
+        font-family: sans-serif;
+    }
+    .menu.open
+    {
+        width: 240px;
+    }
+    .menu a
+    {
+        text-decoration: none;
+    }
+    .menu .actionbar
+    {
+        width: 100%;
+        height: 10%;
+        padding: 0.5rem;
+        overflow: hidden;
+    }
+    .menu .actionbar div
+    {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        border-radius: 0.5rem;
+        transition: 0.3s ease;
+    }
+    .menu .actionbar div button
+    {
+        background-color: transparent;
+        outline: none;
+        border: none;
+        border-radius: 0.5rem;
+        color: var(--bg-black-100);
+        width: 45px;
+        height: 45px;
+        transition: 0.3s ease;
+        font-size: 1rem;
+    }
+    .menu .actionbar div button:hover
+    {
+        background-color: rgb(132,0,255);
+    }
+    .menu .actionbar div h3
+    {
+        width: calc(100% - 45px);
+        text-align: center;
+    }
+    .menu .optionsBar
+    {
+        overflow: hidden;
+        display: flex;
+        width: 100%;
+        height: 60%;
+        padding: 0 0.5rem;
+        align-items: center;
+        flex-direction: column;
+    }
+    .menu .optionsBar .menuItem
+    {
+        width: 100%;
+        height: 45px;
+        margin: 0.3rem;
+    }
+    .menu .optionsBar .menuItem .menuOption
+    {
+        font-size: 1rem;
+        outline: none;
+        border: none;
+        background-color: transparent;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        border-radius: 0.5rem;
+        transition: 0.3s ease;
+    }
+    .menu .optionsBar .menuItem .menuOption:hover
+    {
+        background-color: rgb(132,0,255);
+    }
+    .menu .optionsBar .menuItem .menuOption i
+    {
+        width: 45px;
+        text-align: center;
+        color: var(--bg-black-100);
+    }
+    .menu .optionsBar .menuItem .menuOption h5
+    {
+        width: calc(100% - 45px);
+    }
+    .menuText
+    {
+        color: var(--bg-black-20);
+        transform: translateX(-250px);
+        opacity: 0;
+        transition: transform 0.3s ease 0.1s;
+    }
+    .menuText.open2
+    {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    .menu .menuBreak
+    {
+        width: 100%;
+        height: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .menu .menuBreak hr
+    {
+        width: 50%;
+        height: 3px;
+        background-color: var(--bg-black-100);
+        border: none;
+        border-radius: 5px;
+    }
+    .menu .menuUser
+    {
+        width: 100%;
+        height: 10px;
+        padding: 4.5rem 0 3rem 0;
+    }
+    .menu .menuUser a
+    {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        text-decoration: none;
+        padding: 0.5rem;
+        position: relative;
+    }
+    .menu .menuUser a div
+    {
+        width: 45px;
+        height: 45px;
+        position: relative;
+        border-radius: 0.5rem;
+    }
+    .menu .menuUser a div img
+    {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 0.5rem;
+    }
+    .menu .menuUser a .Username
+    {
+        width: calc(70% - 45px);
+    }
+    .menu .menuUser a p
+    {
+        width: calc(30% - 45px);
+    }
+    .menu .menuUser a:hover p
+    {
+        animation: animArrow 0.3s ease 2;
+    }
+    @keyframes animArrow
+    {
+        0%
+        {
+            transform: translateX(0);
+        }
+        50%
+        {
+            transform: translateX(5px);
+        }
+        100%
+        {
+            transform: translateX(0);
+        }
+    }
+    .menu .menuUser .userInfo
+    {
+        position: absolute;
+        width: 10rem;
+        height: 8rem;
+        opacity: 0;
+        color: var(--bg-black-50);
+        pointer-events: none;
+        top: 58%;
+        left: 1.5rem;
+        transition: 0.3s ease;
+        transform: scale(0);
+        transform-origin: bottom left;
+    }
+    .menu .menuUser .userInfo div
+    {
+        position: relative;
+        width: 100%;
+        height: calc(100% - 20px);
+        box-shadow: 0px 0px 40px rgba(0,0,0,0.3);
+        background-color: var(--bg-black-100);
+        border-top-left-radius: 1rem;
+        border-top-right-radius: 1rem;
+        border-bottom-right-radius: 1rem;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        flex-direction: column;
+    }
+    .menu .menuUser .userInfo div h1
+    {
+        font-size: 4rem;
+    }
+    .menu .menuUser .userInfo div::before
+    {
+        content: '';
+        position: absolute;
+        bottom: -18px;
+        left: -2px;
+        width: 0;
+        height: 0;
+        border-top: 15px solid transparent;
+        border-bottom: 15px solid transparent;
+        border-right: 15px solid var(--bg-black-100);
+        transform: rotate(45deg);
+    }
+    .menu .menuUser:hover .userInfo
+    {
+        pointer-events: all;
+        opacity: 1;
+        transform: scale(1);
+    }
+    .menu .themeBar
+    {
+        overflow: hidden;
+        width: 100%;
+        height: 10%;
+        padding: 0.5rem;
+    }
+    .menu .themeBar div
+    {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        border-radius: 0.5rem;
+        transition: 0.3s ease;
+    }
+    .menu .themeBar div button
+    {
+        background-color: transparent;
+        outline: none;
+        border: none;
+        border-radius: 0.5rem;
+        color: var(--bg-black-100);
+        width: 100%;
+        height: 45px;
+        transition: 0.3s ease;
+        font-size: 1rem;
+    }
+    .menu .themeBar div button
+    {
+        background-color: rgb(132,0,255);
+    }
+    .menu .optionsBar .menuItem .menuOption:hover .menuText,
+    .menu .optionsBar .menuItem .menuOption:hover i,
+    .menu .actionbar div button:hover i,
+    .menu .themeBar div button:hover i
+    {
+        color: #fff;
+    }
+    .search-form {
+
+    position: relative;
+  }
+
+  .search-container {
+    position: absolute;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  }
+
+  .search-container {
+    position: relative;
+  }
+
+  .search-container input[type="text"],
+  .search-container button[type='submit'] {
+    padding: 8px;
+    border-radius: 10px;
+  }
+
+  .search-container input[type="text"] {
+    flex-grow: 1;
+    width: 900px;
+    text-align: center;
+    border-color: aliceblue;
+  }
+
+  .search-container button[type='submit'] {
+     position: absolute;
+     right:0;
+     top:auto;
+     bottom:auto;
+     margin-left: -1px;
+     background-color: white;
+     border-color: white;
+     width: 100px;
+  }
+  .search-container button[type='submit']:hover {
+    background-color: #cfe6ed;
+ }
+ * {
+	border: 0;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+</style>
+<body>
+    <div class="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+  <form class="search-form" action="/form_register" method="post">
+        <div class="search-container" >
+          <input type="text" name="search_bttn" autocomplete="off" placeholder="Search..." />
+          <a href="#"><button type='submit'>
+            Search
+          </button></a>
+        </div>
+    </form>
+
+  <nav id="menu" class="menu">
+    <div class="actionbar">
+        <div>
+            <button id="menuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h3 class="menuText">Dashboard</h3>
+        </div>
+    </div>
+    <ul class="optionsBar">
+        <li class="menuItem">
+            <a href="https://www.flipkart.com/">
+            <button id="homeBtn" class="menuOption">
+                <i class="fas fa-home"></i><h5 class="menuText">Home</h5>
+            </button>
+            </a>
+        </li>
+
+        <li class="menuItem">
+            <button id="productManagerBtn" class="menuOption">
+                <i class="fas fa-shopping-bag"></i><h5 class="menuText">Your cart</h5>
+            </button>
+        </li>
+        <li class="menuItem">
+            <a href="https://www.flipkart.com/offers-store">
+            <button id="constantManagerBtn" class="menuOption">
+                <i class="fas fa-border-all"></i><h5 class="menuText">Explore offers</h5>
+            </button>
+            </a>
+        </li>
+        <li class="menuItem">
+            <button id="orderManagerBtn" class="menuOption">
+                <i class="fas fa-shopping-bag"></i><h5 class="menuText">Order Manager</h5>
+            </button>
+        </li>
+        <li class="menuItem">
+            <a href="{{ url_for('contact_us') }}">
+            <button id="tagManagerBtn" class="menuOption">
+                <i class="fas fa-tag"></i><h5 class="menuText">Feedback</h5>
+            </button>
+            </a>
+        </li>
+    </ul>
+    <div class="menuUser">
+        <a href="https://arjunhere.netlify.app/">
+            <div>
+                <img src="/static/images/user.jpg" alt="">
+            </div>
+            <h5 class="Username menuText">Portfolio</h5>
+            <p class="menuText"><i class="fas fa-chevron-right"></i></p>
+        </a>
+    </div>
+    <div class="themeBar">
+        <div>
+            <button id="themeChangeBtn"><i class="fas "></i></button>
+        </div>
+    </div>
+</nav>
+  <div class="carousel">
+    <figure>
+      <img src="/static/images/image1.jpg" alt="">
+      <img src="/static/images/image2.jpg" alt="">
+      <img src="/static/images/image3.jpg" alt="">
+      <img src="/static/images/image4.jpg" alt="">
+      <img src="/static/images/image5.jpg" alt="">
+       <img src="/static/images/image6.jpg" alt="">
+       <img src="/static/images/image7.jpg" alt="">
+      <img src="/static/images/image8.jpg" alt="">
+    </figure>
+  </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        // Show loading overlay when a link is clicked
+        const links = document.querySelectorAll('a');
+        links.forEach(link => {
+            link.addEventListener('click', () => {
+                const loadingOverlay = document.querySelector('.loading-overlay');
+                loadingOverlay.classList.add('active');
+            });
+        });
+
+        // Hide loading overlay when the page finishes loading
+        window.addEventListener('load', () => {
+            const loadingOverlay = document.querySelector('.loading-overlay');
+            loadingOverlay.classList.remove('active');
+        });
+    </script>
+  <script>
+  window.addEventListener('load', function() {
+  var loadingScreen = document.getElementById('loading-screen');
+  loadingScreen.style.display = 'none';
+});
+
+    var carousel = document.querySelector('.carousel');
+    var figure = carousel.querySelector('figure');
+    var numImages = figure.childElementCount;
+    var theta = Math.PI/ numImages; // Adjust this value to change the scroll speed
+    var currImage = 0;
+
+    function scrollCarousel(direction) {
+      if (direction === 'next') {
+        currImage++;
+      } else {
+        currImage--;
+      }
+
+      const reducedSpeed = 0.2; // Adjust this value to change the speed
+      figure.style.transform = `rotateY(${currImage * -theta * reducedSpeed}rad)`;
+
+    }
+
+    carousel.addEventListener('wheel', function(e) {
+      e.preventDefault();
+      var direction = e.deltaY > 0 ? 'next' : 'prev';
+      scrollCarousel(direction);
+    });
+
+    carousel.addEventListener('touchstart', function(e) {
+      var touchStartX = e.touches[0].clientX;
+
+      carousel.addEventListener('touchmove', function(e) {
+        e.preventDefault();
+        var touchEndX = e.touches[0].clientX;
+        var direction = touchEndX > touchStartX ? 'prev' : 'next';
+        scrollCarousel(direction);
+      });
+
+      carousel.addEventListener('touchend', function() {
+        carousel.removeEventListener('touchmove', null);
+        carousel.removeEventListener('touchend', null);
+      });
+    });
+        const menuBtn = document.getElementById('menuBtn');
+    const menu = document.getElementById('menu');
+    const menuText = document.querySelectorAll('.menuText');
+
+    menuBtn.addEventListener('click', () => {
+        menu.classList.toggle('open');
+        menuText.forEach(function(text, index){
+            setTimeout(() => {
+                text.classList.toggle('open2');
+            }, index * 50);
+        })
+    })
+    $(document).on('click', function(e) {
+        if($(e.target).closest('#menu').length === 2){
+            menu.classList.remove('open');
+            menuText.forEach(function(text, index){
+            setTimeout(() => {
+                text.classList.toggle('open2');
+            }, index * 50);
+        })
+    }
+    })
+    // dark light mode
+
+    const dayNight = document.querySelector('#themeChangeBtn');
+    dayNight.addEventListener("click", () => {
+        document.body.classList.toggle("dark");
+        if(document.body.classList.contains("dark"))
+        {
+            localStorage.setItem("theme","dark");
+        }
+        else
+        {
+            localStorage.setItem("theme","light");
+        }
+        updateIcon();
+    })
+    function themeMode(){
+        if(localStorage.getItem("theme") !== null)
+        {
+            if(localStorage.getItem("theme") === "light")
+            {
+                document.body.classList.remove("dark");
+            }
+            else
+            {
+                document.body.classList.add("dark");
+            }
+        }
+        updateIcon();
+    }
+    themeMode();
+    function updateIcon(){
+        if(document.body.classList.contains("dark"))
+        {
+            dayNight.querySelector("i").classList.remove("fa-moon");
+            dayNight.querySelector("i").classList.add("fa-sun");
+        }
+        else
+        {
+            dayNight.querySelector("i").classList.remove("fa-sun");
+            dayNight.querySelector("i").classList.add("fa-moon");
+        }
+    }
+
+  </script>
+    <script>
+        // Show loading overlay when a link is clicked
+        const links = document.querySelectorAll('a');
+        links.forEach(link => {
+            link.addEventListener('click', () => {
+                const loadingOverlay = document.querySelector('.loading-overlay');
+                loadingOverlay.classList.add('active');
+            });
+        });
+
+        // Hide loading overlay when the page finishes loading
+        window.addEventListener('load', () => {
+            const loadingOverlay = document.querySelector('.loading-overlay');
+            loadingOverlay.classList.remove('active');
+        });
+    </script>
+</body>
+</html>

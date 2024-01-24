@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>FlipkartGrid 5.0</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+<link rel="stylesheet" href="./static/css/style_open.css">
+
+</head>
+<body>
+<a href="{{ url_for('read_more_func') }}">
+<div class="card">
+  <div class="fold"></div>
+  <div class="fold"></div>
+  <div class="fold"></div>
+  <div class="fold"></div>
+  <div class="fold"></div>
+</div></a>
+<!-- partial -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+  document.body.classList.add('fade-out');
+});
+
+window.addEventListener('beforeunload', function() {
+  document.body.style.opacity = 0;
+});
+
+window.addEventListener('load', function() {
+  document.body.style.opacity = 1;
+});
+
+  </script>
+</body>
+</html>

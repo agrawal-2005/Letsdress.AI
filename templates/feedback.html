@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background : url("/static/images/bg_main.jpg");
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 25%;
+            padding: 45px;
+            background-color: rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            animation: fadeIn 1s ease-in-out, slideIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        textarea {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            animation: fadeIn 1s ease-in-out;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #007bff;
+            transform: scale(1.02);
+        }
+
+
+        input[type="text"]:hover,
+        textarea:hover {
+            transform: scale(1.02);
+        }
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-15px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+
+        .error {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            10%, 30%, 50%, 70%, 90% {
+                transform: translateX(-5px);
+            }
+            20%, 40%, 60%, 80% {
+                transform: translateX(5px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Feedback Form</h1>
+        <form action="/form_send" method="post">
+            <label>Name:</label>
+            <input type="text" required="required" autocomplete="off" name="send_name" >
+
+            <label >Email:</label>
+            <input type="text" required="required" autocomplete="off" name="send_email" >
+
+            <label>Message:</label>
+            <textarea required="required" name="send_mess"></textarea>
+            <input type="submit" value="Submit" onclick="validateForm(event)">
+        </form>
+    </div>
+
+    <script>
+        function validateForm(event) {
+
+            var nameField = document.getElementById("name");
+            if (nameField.value.trim() === "") {
+                nameField.classList.add("error");
+                event.preventDefault();
+            }
+        }
+    </script>
+</body>
+</html>
