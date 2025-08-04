@@ -6,7 +6,10 @@ import requests
 import io
 import sqlite3
 import smtplib
-API_TOKEN = "REMOVED"
+from dotenv import load_dotenv
+load_dotenv()
+
+API_TOKEN = os.getenv("API_TOKEN")
 API_URL = "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5"
 headers = {"Authorization": f"Bearer {API_TOKEN}"}
 app = Flask(__name__)
@@ -58,7 +61,7 @@ def Send():
     print(send_user,send_gmail,send_mess)
     send = "project.feedback.02@gmail.com"
     rec = "project.feedback.02@gmail.com"
-    pas = "yzay obwk fisz kpcj"
+    pas = os.getenv("GMAIL_PASSWORD")
     message = f"Subject: {send_gmail}\n\nMR/MRS {send_user} messaged you: {send_mess}"
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
