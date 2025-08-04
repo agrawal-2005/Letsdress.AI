@@ -5,9 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Feedback Form</title>
     <style>
+
         body {
             font-family: Arial, sans-serif;
-            background : url("/static/images/bg_main.jpg");
+            background-image: url('./static/images/bg_main.jpg');
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
             color: #fff;
             margin: 0;
             padding: 0;
@@ -133,14 +137,10 @@
     <div class="container">
         <h1>Feedback Form</h1>
         <form action="/form_send" method="post">
-            <label>Name:</label>
-            <input type="text" required="required" autocomplete="off" name="send_name" >
 
-            <label >Email:</label>
-            <input type="text" required="required" autocomplete="off" name="send_email" >
-
-            <label>Message:</label>
-            <textarea required="required" name="send_mess"></textarea>
+            <input type="text" required="required" autocomplete="off" name="send_name" placeholder="Name" >
+            <input type="text" required="required" autocomplete="off" name="send_email" placeholder="Email Account" >
+            <input type="text" required="required" autocomplete="off" name="send_mess" placeholder="Your valuable feedback" >
             <input type="submit" value="Submit" onclick="validateForm(event)">
         </form>
     </div>

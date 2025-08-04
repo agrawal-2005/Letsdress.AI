@@ -9,9 +9,9 @@ body {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  -webkit-animation: crunch 4s 1s ease-in-out infinite;
-          animation: crunch 4s 1s ease-in-out infinite;
+  background-color: rgba(0,0,0,0.4)
 }
+
 body.fade-out {
   opacity: 0;
 }
@@ -27,31 +27,59 @@ body.fade-out {
 }
 
 .card {
-  display: flex;
-  width: 95vw;
-  height: 22.5625vw;
-}
 
+  display: flex;
+  width: 41vw;
+
+}
+.card:focus {
+            outline: none;
+        }
+.background-clip{
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    }
+@media (min-aspect-ratio:16/9){
+    .background-clip{
+    width: 100%;
+    height: 100%;
+    }
+}
+@media (max-aspect-ratio:16/9){
+    .background-clip{
+
+    height: 100%;
+    }
+}
 .fold {
   flex: 1;
-  background-image: url("../images/opening_bg.jpg");
+
+  background-image: url("../images/opening_bg.png");
   background-size: cover;
   -webkit-animation: 4s 1s ease-in-out infinite;
           animation: 4s 1s ease-in-out infinite;
 }
 .fold:nth-child(1) {
+
+  height:10vw;
   background-position: 0%;
 }
 .fold:nth-child(2) {
-  background-position: 25%;
+    height:10vw;
+    background-position: 25%;
 }
 .fold:nth-child(3) {
+    height:10vw;
   background-position: 50%;
 }
 .fold:nth-child(4) {
+    height:10vw;
   background-position: 75%;
 }
 .fold:nth-child(5) {
+    height:10vw;
   background-position: 100%;
 }
 .fold:first-child {

@@ -9,6 +9,7 @@ import smtplib
 API_TOKEN = os.getenv("API_TOKEN")
 API_URL = "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5"
 headers = {"Authorization": f"Bearer {API_TOKEN}"}
+
 app = Flask(__name__)
 def save_database(image,text_data):
     def convert_image_into_binary(filename):
@@ -28,7 +29,7 @@ def save_database(image,text_data):
     def create_database():
         image_database = sqlite3.connect("./database/Image_data.db")
         data = image_database.cursor()
-        data.execute("CREATE TABLE IF NOT EXISTS Image(Image BLOB)")
+        data.execute("CREATE TABLE IF NOT EXISTS Image(Image BLOB, text_feature TEXT)")
         image_database.commit()
         image_database.close()
     try:
