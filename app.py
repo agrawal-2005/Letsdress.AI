@@ -6,14 +6,36 @@ import requests
 import io
 import sqlite3
 import smtplib
-from dotenv import load_dotenv
-load_dotenv()
-
 API_TOKEN = os.getenv("API_TOKEN")
 API_URL = "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5"
 headers = {"Authorization": f"Bearer {API_TOKEN}"}
 app = Flask(__name__)
+def save_database(image,text_data):
+    def convert_image_into_binary(filename):
+        with open(filename, 'rb') as file:
+            photo_image = file.read()
+        return photo_image
 
+    def insert_image(image):
+        image_database = sqlite3.connect("./database/Image_data.db")
+        data = image_database.cursor()
+        insert_photo = convert_image_into_binary(image)
+        data.execute("INSERT INTO Image (Image, text_feature) VALUES (:image, :text)", {'image': insert_photo, 'text': text_data})
+
+        image_database.commit()
+        image_database.close()
+
+    def create_database():
+        image_database = sqlite3.connect("./database/Image_data.db")
+        data = image_database.cursor()
+        data.execute("CREATE TABLE IF NOT EXISTS Image(Image BLOB)")
+        image_database.commit()
+        image_database.close()
+    try:
+        create_database()
+        insert_image(image)
+    except Exception as e:
+        return str(e)
 def generate_image(prop):
     def generate(user_input):
         def uniquify(path):
@@ -27,16 +49,17 @@ def generate_image(prop):
         def query(payload):
             response = requests.post(API_URL, headers=headers, json=payload)
             return response.content
-
-        image_bytes = query({"inputs": user_input})
-        image = PIL.Image.open(io.BytesIO(image_bytes))
-        image_path = "image" + str(i) + ".jpg"
-        image.save("./static/images/" + image_path)
-        print(f"Image saved as {image_path}")
-
+        try:
+            image_bytes = query({"inputs": user_input})
+            image = PIL.Image.open(io.BytesIO(image_bytes))
+            image_path = "image" + str(i) + ".jpg"
+            image.save("./static/images/" + image_path)
+            print(f"Image saved as {image_path}")
+            save_database("./static/images/" + image_path, prop)
+        except Exception as e:
+            return str(e)
     for i in range(1,9):
            generate(str(prop)+ "outfit" + str(i))
-
 
 @app.route('/')
 def index():
@@ -50,7 +73,7 @@ def fetch():
         req = request.form['search_bttn']
         print(req)
         generate_image(req)
-        return render_template('index2.html')
+        return render_template('index.html')
     except Exception as e:
         return str(e)
 @app.route('/form_send',methods=['POST','GET'])
@@ -71,8 +94,5 @@ def Send():
 @app.route('/contact_us', methods=['GET', 'POST'])
 def contact_us():
     return render_template('feedback.html')
-@app.route('/startup', methods=['GET', 'POST'])
-def startup():
-    return render_template('opening.html')
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=81)
