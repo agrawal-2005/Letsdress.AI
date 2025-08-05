@@ -137,8 +137,7 @@
     <div class="container">
         <h1>Feedback Form</h1>
         <form action="/form_send" method="post">
-
-            <input type="text" required="required" autocomplete="off" name="send_name" placeholder="Name" >
+            <input type="text" id="name" required="required" autocomplete="off" name="send_name" placeholder="Name" >
             <input type="text" required="required" autocomplete="off" name="send_email" placeholder="Email Account" >
             <input type="text" required="required" autocomplete="off" name="send_mess" placeholder="Your valuable feedback" >
             <input type="submit" value="Submit" onclick="validateForm(event)">

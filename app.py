@@ -65,9 +65,11 @@ def generate_image(prop):
 @app.route('/')
 def index():
     return render_template('opening.html')
+    
 @app.route('/read_more', methods=['GET', 'POST'])
 def read_more_func():
     return render_template('index.html')
+
 @app.route('/form_register', methods=['POST', 'GET'])
 def fetch():
     try:

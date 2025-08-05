@@ -543,42 +543,31 @@
         </div>
         <ul class="optionsBar">
             <li class="menuItem">
-                <a href="" https://www.flipkart.com/">
-                    <button id="homeBtn" class="menuOption">
-                        <i class="fas fa-home"></i>
-                        <h5 class="menuText">Home</h5>
-                    </button>
-                </a>
+                <button id="homeBtn" class="menuOption" onclick="location.href='https://www.flipkart.com/'">
+                    <i class="fas fa-home"></i>
+                    <h5 class="menuText">Home</h5>
+                </button>
             </li>
-
+        
             <li class="menuItem">
-                <a href="https://www.bing.com/shop?q=best+trending+outfits&FORM=SHOPTB">
-                    <button id="productManagerBtn" class="menuOption">
-                        <i class="fas fa-shopping-bag"></i>
-                        <h5 class="menuText">Trending</h5>
-                    </button>
-                </a>
+                <button id="productManagerBtn" class="menuOption" onclick="location.href='https://www.bing.com/shop?q=best+trending+outfits&FORM=SHOPTB'">
+                    <i class="fas fa-shopping-bag"></i>
+                    <h5 class="menuText">Trending</h5>
+                </button>
             </li>
+        
             <li class="menuItem">
-                <a href="https://www.flipkart.com/offers-store">
-                    <button id="constantManagerBtn" class="menuOption">
-                        <i class="fas fa-border-all"></i>
-                        <h5 class="menuText">Explore offers</h5>
-                    </button>
-                </a>
+                <button id="constantManagerBtn" class="menuOption" onclick="location.href='https://www.flipkart.com/offers-store'">
+                    <i class="fas fa-border-all"></i>
+                    <h5 class="menuText">Explore offers</h5>
+                </button>
             </li>
-            <!-- <li class="menuItem">
-            <button id="orderManagerBtn" class="menuOption">
-                <i class="fas fa-shopping-bag"></i><h5 class="menuText">Order Manager</h5>
-            </button>
-        </li> -->
+        
             <li class="menuItem">
-                <a href="{{ url_for('contact_us') }}">
-                    <button id="tagManagerBtn" class="menuOption">
-                        <i class="fas fa-tag"></i>
-                        <h5 class="menuText">Feedback</h5>
-                    </button>
-                </a>
+                <button id="tagManagerBtn" class="menuOption" onclick="location.href='{{ url_for('contact_us') }}'">
+                    <i class="fas fa-tag"></i>
+                    <h5 class="menuText">Feedback</h5>
+                </button>
             </li>
         </ul>
         <div class="menuUser">
@@ -632,45 +621,62 @@
             loadingScreen.style.display = 'none';
         });
 
-        var carousel = document.querySelector('.carousel');
-        var figure = carousel.querySelector('figure');
-        var numImages = figure.childElementCount;
-        var theta = Math.PI / numImages; // Adjust this value to change the scroll speed
-        var currImage = 0;
+        // 3D Carousel Interactivity
+        var carousel = document.querySelector('.carousel')
+        var figure = carousel.querySelector('figure')
+        var numImages = figure.childElementCount
+        var theta = Math.PI/numImages
+        var currImage = 0
 
-        function scrollCarousel(direction) {
-            if (direction === 'next') {
+        function scrollCarousel(direction){
+            if(direction === 'next'){
                 currImage++;
-            } else {
-                currImage--;
             }
+            else currImage--;
 
-            const reducedSpeed = 0.2; // Adjust this value to change the speed
-            figure.style.transform = `rotateY(${currImage * -theta * reducedSpeed}rad)`;
-
+            const reducedSpeed = 0.1;
+            figure.style.transform = `rotateY(${currImage * -theta * reducedSpeed}rad)`;            
         }
 
-        carousel.addEventListener('wheel', function (e) {
+        // Wheel event (Desktop)
+        carousel.addEventListener('wheel', function(e){
             e.preventDefault();
             var direction = e.deltaY > 0 ? 'next' : 'prev';
             scrollCarousel(direction);
         });
 
-        carousel.addEventListener('touchstart', function (e) {
-            var touchStartX = e.touches[0].clientX;
+        // Touch events (Mobile)
+        let touchStartX = null;
 
-            carousel.addEventListener('touchmove', function (e) {
-                e.preventDefault();
-                var touchEndX = e.touches[0].clientX;
-                var direction = touchEndX > touchStartX ? 'prev' : 'next';
+        function handleTouchStart(e){
+            touchStartX = e.touches[0].clientX;
+        }
+
+        function handleTouchMove(e){
+            e.preventDefault();
+        }
+
+        function handleTouchEnd(e){
+            const touchEndX = e.changedTouches[0].clientX;
+            const threshold = 30;
+
+            if(touchStartX == null) return;
+
+            const deltaX = touchEndX - touchStartX;
+
+            if(Math.abs(deltaX) > threshold){
+                const direction = deltaX > 0 ? 'prev' : 'next';
                 scrollCarousel(direction);
-            });
+            }
 
-            carousel.addEventListener('touchend', function () {
-                carousel.removeEventListener('touchmove', null);
-                carousel.removeEventListener('touchend', null);
-            });
-        });
+            touchStartX = null;
+        }
+
+        carousel.removeEventListener('touchStart', handleTouchStart);
+        carousel.removeEventListener('touchmove', handleTouchMove, { passive: false });
+        carousel.removeEventListener('touchend', handleTouchEnd);
+
+        // toggle menu
         const menuBtn = document.getElementById('menuBtn');
         const menu = document.getElementById('menu');
         const menuText = document.querySelectorAll('.menuText');
@@ -684,7 +690,7 @@
             })
         })
         $(document).on('click', function (e) {
-            if ($(e.target).closest('#menu').length === 2) {
+            if (!$(e.target).closest('#menu, #menuBtn').length) {
                 menu.classList.remove('open');
                 menuText.forEach(function (text, index) {
                     setTimeout(() => {
@@ -693,8 +699,8 @@
                 })
             }
         })
-        // dark light mode
 
+        // dark light mode
         const dayNight = document.querySelector('#themeChangeBtn');
         dayNight.addEventListener("click", () => {
             document.body.classList.toggle("dark");
@@ -730,7 +736,7 @@
         }
 
     </script>
-    <script>
+    <!-- <script>
         // Show loading overlay when a link is clicked
         const Footerlinks = document.querySelectorAll('a');
         links.forEach(link => {
@@ -745,7 +751,7 @@
             const loadingOverlay = document.querySelector('.loading-overlay');
             loadingOverlay.classList.remove('active');
         });
-    </script>
+    </script> -->
 </body>
 
 </html>
