@@ -1,15 +1,16 @@
 # 👗 Letsdress.AI – AI-Powered Fashion Personalization Tool
 
-Letsdress.AI is a fashion-enhancement AI tool designed to recommend clothing styles using the power of image generation and prompt-based personalization. Built for intuitive interaction and visual impact, it brings your fashion sense to life with a friendly user interface.
+**Letsdress.AI** is a fashion-enhancement AI tool that recommends personalized clothing styles using image generation and prompt-based interaction. It combines the power of Stable Diffusion with a clean, modern UI for an intuitive user experience.
 
 ---
 
 ## 📌 Overview
 
-**Letsdress.AI** aims to revolutionize online fashion shopping by offering:
-- 🧠 **Smart Recommendations** tailored to user preferences  
-- 🔁 **Real-Time Trend Adaptation** to stay in sync with evolving styles  
-- 💻 **Modern UI/UX** with interactive, visually rich components  
+Letsdress.AI helps users visualize personalized fashion recommendations by offering:
+
+* 🧠 **Smart Recommendations** based on user input and style prompts
+* 🔁 **Real-Time Trend Adaptation** that reflects the latest fashion trends
+* 💻 **Modern UI/UX** with interactive and responsive design
 
 ---
 
@@ -17,67 +18,56 @@ Letsdress.AI is a fashion-enhancement AI tool designed to recommend clothing sty
 
 ```
 Letsdress.AI/
-│
-├── authtoken.py                    # Authentication token for APIs (if used)
-├── requirements.txt                # Python dependencies
-├── feedback form.png               # Screenshot assets
-├── prompt-insertion.png
-├── result1.png
-├── result2.png
-├── startup-page.png
+├── authtoken.py                  # App entry point and API auth logic
+├── requirements.txt             # Python dependencies
+├── *.png                        # Screenshot assets
 │
 ├── database/
-│   ├── image_data.py               # Script to handle database I/O
-│   ├── Image_data.db               # SQLite database
-│   └── .idea/                      # IDE-specific config
+│   ├── image_data.py           # DB script for storing images and metadata
+│   └── Image_data.db           # SQLite database
 │
-├── static/                         # Static assets for frontend
+├── static/                     # Static frontend files
 │   ├── css/
-│   │   ├── style.css
-│   │   └── style_open.css
-│   ├── images/
-│   │   └── (Backgrounds, avatars, and results)
-│   └── js/
-│       └── script.js
+│   ├── js/
+│   └── images/
 │
-├── templates/                      # HTML templates (Jinja2 for Flask)
+├── templates/                  # HTML templates (Jinja2)
 │   ├── feedback.html
 │   ├── index.html
 │   └── opening.html
 │
-├── .idea/                          # JetBrains IDE configs
-└── __pycache__/                    # Compiled Python files
+├── .idea/                      # IDE (PyCharm) configs [optional, can ignore]
+└── __pycache__/                # Python bytecode cache [auto-generated]
 ```
 
 ---
 
 ## 🧠 Features
 
-- 👤 **User Personalization** based on browsing history and style inputs  
-- 🛍️ **Outfit Recommender** using machine learning models  
-- 📈 **Trend-Aware Ranking** to highlight in-demand items  
-- 💅 **Aesthetic UI** with intuitive navigation and filters  
-- 📊 **Category Prediction** and intelligent filtering  
+* 👤 **User Personalization**: Tailors results to user prompts
+* 🛍️ **Outfit Generation**: Uses Stable Diffusion for realistic clothing previews
+* 📈 **Trend-Aware Filtering**: Highlights trending styles
+* 💅 **Clean UI**: Minimal, modern, and user-friendly
+* 📊 **Database Storage**: Saves generated images with prompt tags
 
 ---
 
 ## 🧰 Tech Stack
 
-| Frontend        | Backend             | Machine Learning        | Database/Misc     |
-|-----------------|---------------------|-----------------------  |-------------------|
-| HTML / CSS / JS | Flask               |Stable Diffusion, Jinja2 |    SQLite3        |
+| Frontend        | Backend | Machine Learning         | Database |
+| --------------- | ------- | ------------------------ | -------- |
+| HTML / CSS / JS | Flask   | Stable Diffusion, Jinja2 | SQLite3  |
 
 ---
 
-## 🔄 How it Works
+## 🔄 How It Works
 
-1. **User Input Logging**: Tracks selected styles and inputs for better personalization  
-2. **ML Model Inference**: Flask server handles prompt-based image generation and filtering  
-3. **Flask Routing**: Backend routes connect frontend UI to model logic and database  
-4. **Frontend Rendering**: Personalized visuals shown using responsive web UI  
+1. **User Prompt**: Users input a desired clothing style
+2. **Image Generation**: Prompt sent to the backend → Stable Diffusion generates visuals
+3. **Storage**: Images saved in `static/images/` and logged in SQLite DB
+4. **Display**: Results rendered dynamically on the web UI
 
 ---
-
 
 ## 🛠️ Getting Started
 
@@ -88,52 +78,64 @@ git clone https://github.com/agrawal-2005/Letsdress.AI.git
 cd Letsdress.AI
 ```
 
-### 2. Create a Virtual Environment
+### 2. Set Up the Environment
 
 ```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 ```
 
-### 3. Install Requirements
+### 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Run the Application
+### 4. Add API Credentials
+
+Create a `.env` file in the root directory:
+
+```env
+API_URL=https://router.huggingface.co/hf-inference/models/stabilityai/stable-diffusion-xl-base-1.0
+API_TOKEN=your_huggingface_token_here
+GMAIL=your_email_here
+GMAIL_PASSWORD=your_gmail_app_password_here
+```
+
+### 5. Run the App
 
 ```bash
 python authtoken.py
 ```
 
-Open your browser and navigate to `http://localhost:5000`
+Visit: `http://localhost:5000`
 
 ---
 
 ## 🧬 Machine Learning
 
-- Utilizes prompt-based image generation models (e.g., Stable Diffusion)
-- Focused on enhancing personalization using visual outputs and style-based text prompts 
-- Flask API serves predictions in real-time to the Node backend  
+* Powered by **Stable Diffusion XL**
+* Prompt-based generation: `"<style> outfit"` patterns
+* Images rendered and saved for future display + analytics
+* Supports basic trend personalization via text prompts
 
 ---
 
-## 📸 Sample Screenshots
+## 📸 Screenshots
 
-| Startup Page | Result Image |
-|--------------|--------------|
-| ![Startup](/startup-page.png) | ![Result1](/result.png) ![Result2](/result-1.png)|
+| Startup Page                 | Results                                         |
+| ---------------------------- | ----------------------------------------------- |
+| ![Startup](startup-page.png) | ![Result1](result.png) ![Result2](result-1.png) |
 
 ---
 
-## 🙋‍♂️ Feedback
+## 🙋 Feedback
 
-Feel free to raise an issue or suggest improvements.  
-Contact: [Prashant Agrawal](https://github.com/agrawal-2005)
+Found an issue or have an idea?
+Reach out via GitHub: [@agrawal-2005](https://github.com/agrawal-2005)
 
 ---
 
 ## 📄 License
 
-MIT License - See [LICENSE](LICENSE) file (if available).
+MIT License — See [LICENSE](LICENSE) for details.
