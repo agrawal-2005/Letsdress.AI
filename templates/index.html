@@ -524,7 +524,7 @@
     </div>
     <!-- Centered Search Form -->
     <div class="center-container">
-        <form class="search-form" action="/form_register" method="post">
+        <form class="search-form" action="{{ url_for('fetch') }}" method="post">
             <div class="search-container">
                 <input type="text" name="search_bttn" autocomplete="off" placeholder="Describe your Imagination..." />
                 <button type="submit">Explore</button>
@@ -548,26 +548,29 @@
                     <h5 class="menuText">Home</h5>
                 </button>
             </li>
-        
+
             <li class="menuItem">
-                <button id="productManagerBtn" class="menuOption" onclick="location.href='https://www.bing.com/shop?q=best+trending+outfits&FORM=SHOPTB'">
+                <button id="productManagerBtn" class="menuOption"
+                    onclick="location.href='https://www.bing.com/shop?q=best+trending+outfits&FORM=SHOPTB'">
                     <i class="fas fa-shopping-bag"></i>
                     <h5 class="menuText">Trending</h5>
                 </button>
             </li>
-        
+
             <li class="menuItem">
-                <button id="constantManagerBtn" class="menuOption" onclick="location.href='https://www.flipkart.com/offers-store'">
+                <button id="constantManagerBtn" class="menuOption"
+                    onclick="location.href='https://www.flipkart.com/offers-store'">
                     <i class="fas fa-border-all"></i>
                     <h5 class="menuText">Explore offers</h5>
                 </button>
             </li>
-        
             <li class="menuItem">
-                <button id="tagManagerBtn" class="menuOption" onclick="location.href='{{ url_for('contact_us') }}'">
-                    <i class="fas fa-tag"></i>
-                    <h5 class="menuText">Feedback</h5>
-                </button>
+                <a href="{{ url_for('contact_us') }}">
+                    <button id="tagManagerBtn" class="menuOption">
+                        <i class="fas fa-tag"></i>
+                        <h5 class="menuText">Feedback</h5>
+                    </button>
+                </a>
             </li>
         </ul>
         <div class="menuUser">
@@ -616,30 +619,32 @@
         });
     </script>
     <script>
-        window.addEventListener('load', function () {
-            var loadingScreen = document.getElementById('loading-screen');
-            loadingScreen.style.display = 'none';
-        });
+        window.onload = () => {
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+            }
+        };
 
         // 3D Carousel Interactivity
         var carousel = document.querySelector('.carousel')
         var figure = carousel.querySelector('figure')
         var numImages = figure.childElementCount
-        var theta = Math.PI/numImages
+        var theta = Math.PI / numImages
         var currImage = 0
 
-        function scrollCarousel(direction){
-            if(direction === 'next'){
+        function scrollCarousel(direction) {
+            if (direction === 'next') {
                 currImage++;
             }
             else currImage--;
 
             const reducedSpeed = 0.1;
-            figure.style.transform = `rotateY(${currImage * -theta * reducedSpeed}rad)`;            
+            figure.style.transform = `rotateY(${currImage * -theta * reducedSpeed}rad)`;
         }
 
         // Wheel event (Desktop)
-        carousel.addEventListener('wheel', function(e){
+        carousel.addEventListener('wheel', function (e) {
             e.preventDefault();
             var direction = e.deltaY > 0 ? 'next' : 'prev';
             scrollCarousel(direction);
@@ -648,23 +653,23 @@
         // Touch events (Mobile)
         let touchStartX = null;
 
-        function handleTouchStart(e){
+        function handleTouchStart(e) {
             touchStartX = e.touches[0].clientX;
         }
 
-        function handleTouchMove(e){
+        function handleTouchMove(e) {
             e.preventDefault();
         }
 
-        function handleTouchEnd(e){
+        function handleTouchEnd(e) {
             const touchEndX = e.changedTouches[0].clientX;
             const threshold = 30;
 
-            if(touchStartX == null) return;
+            if (touchStartX == null) return;
 
             const deltaX = touchEndX - touchStartX;
 
-            if(Math.abs(deltaX) > threshold){
+            if (Math.abs(deltaX) > threshold) {
                 const direction = deltaX > 0 ? 'prev' : 'next';
                 scrollCarousel(direction);
             }
@@ -690,7 +695,7 @@
             })
         })
         $(document).on('click', function (e) {
-            if (!$(e.target).closest('#menu, #menuBtn').length) {
+            if ($(e.target).closest('#menu').length === 2) {
                 menu.classList.remove('open');
                 menuText.forEach(function (text, index) {
                     setTimeout(() => {
