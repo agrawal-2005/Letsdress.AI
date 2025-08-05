@@ -123,7 +123,7 @@ Open your browser and navigate to `http://localhost:5000`
 
 | Startup Page | Result Image |
 |--------------|--------------|
-| ![Startup](/startup-page.png) | ![Result1](/result1.png) ![Result2](/result2.png)|
+| ![Startup](/startup-page.png) | ![Result1](/result.png) ![Result2](/result-1.png)|
 
 ---
 
