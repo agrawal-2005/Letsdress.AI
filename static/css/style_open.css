@@ -1,122 +1,111 @@
-html {
-  background: radial-gradient(at center right, #222, #000);
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;700&display=swap');
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
 }
 
 body {
-  opacity: 1;
-  transition: opacity 2s ease-in-out;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background-color: rgba(0,0,0,0.4)
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #000;
 }
 
-body.fade-out {
-  opacity: 0;
+.background-video {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -1;
+    transform: translateX(-50%) translateY(-50%);
+    filter: brightness(0.4);
 }
-@-webkit-keyframes crunch {
-  50% {
-    transform: scaleX(0.6);
-  }
+
+.content-container {
+    text-align: center;
+    color: white;
 }
-@keyframes crunch {
-  50% {
-    transform: scaleX(0.6);
-  }
+
+.headings {
+    margin-bottom: 40px;
+}
+
+h1 {
+    font-size: 4rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+}
+
+p {
+    font-size: 1.2rem;
+    font-weight: 300;
+    letter-spacing: 1px;
+    opacity: 0.8;
+}
+
+.card-link {
+    text-decoration: none;
 }
 
 .card {
-
-  display: flex;
-  width: 41vw;
-
+    display: flex;
+    width: 40vw;
+    max-width: 600px;
+    height: 10vw;
+    max-height: 150px;
+    position: relative;
+    cursor: pointer;
+    overflow: hidden; /* Important for the shutter effect */
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    background-color: #333; /* Fallback background */
 }
-.card:focus {
-            outline: none;
-        }
-.background-clip{
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    }
-@media (min-aspect-ratio:16/9){
-    .background-clip{
-    width: 100%;
-    height: 100%;
-    }
-}
-@media (max-aspect-ratio:16/9){
-    .background-clip{
 
-    height: 100%;
-    }
-}
 .fold {
-  flex: 1;
+    flex: 1;
+    height: 100%;
+    background-image: url("../images/opening_bg.png");
+    background-size: cover;
+    transition: transform 0.6s cubic-bezier(0.86, 0, 0.07, 1);
+}
 
-  background-image: url("../images/opening_bg.png");
-  background-size: cover;
-  -webkit-animation: 4s 1s ease-in-out infinite;
-          animation: 4s 1s ease-in-out infinite;
-}
-.fold:nth-child(1) {
+.fold:nth-child(1) { background-position: 0%; }
+.fold:nth-child(2) { background-position: 25%; }
+.fold:nth-child(3) { background-position: 50%; }
+.fold:nth-child(4) { background-position: 75%; }
+.fold:nth-child(5) { background-position: 100%; }
 
-  height:10vw;
-  background-position: 0%;
+.enter-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
 }
-.fold:nth-child(2) {
-    height:10vw;
-    background-position: 25%;
+
+/* --- Shutter Animation on Hover --- */
+.card:hover .enter-text {
+    opacity: 1;
+    transition-delay: 0.2s;
 }
-.fold:nth-child(3) {
-    height:10vw;
-  background-position: 50%;
+
+.card:hover .fold:nth-child(odd) {
+    transform: translateY(-100%);
 }
-.fold:nth-child(4) {
-    height:10vw;
-  background-position: 75%;
-}
-.fold:nth-child(5) {
-    height:10vw;
-  background-position: 100%;
-}
-.fold:first-child {
-  border-radius: 2vw 0 0 2vw;
-}
-.fold:last-child {
-  border-radius: 0 2vw 2vw 0;
-}
-.fold:nth-child(odd) {
-  -webkit-animation-name: odd-fold;
-          animation-name: odd-fold;
-}
-@-webkit-keyframes odd-fold {
-  50% {
-    transform: skewY(15deg);
-    filter: brightness(1.25);
-  }
-}
-@keyframes odd-fold {
-  50% {
-    transform: skewY(15deg);
-    filter: brightness(1.25);
-  }
-}
-.fold:nth-child(even) {
-  -webkit-animation-name: even-fold;
-          animation-name: even-fold;
-}
-@-webkit-keyframes even-fold {
-  50% {
-    transform: skewY(-15deg);
-    filter: brightness(0.75);
-  }
-}
-@keyframes even-fold {
-  50% {
-    transform: skewY(-15deg);
-    filter: brightness(0.75);
-  }
+
+.card:hover .fold:nth-child(even) {
+    transform: translateY(100%);
 }

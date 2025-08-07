@@ -1,38 +1,35 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Letsdress.Ai</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
-<link rel="stylesheet" href="./static/css/style_open.css">
-
+    <meta charset="UTF-8">
+    <title>Welcome to Letsdress.Ai</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_open.css') }}">
 </head>
+
 <body>
-<video autoplay playsinline muted loop class="background-clip">
-  <source src="./static/images/opening_bg.mp4" type="video/mp4">
-</video>
-<a href="{{ url_for('read_more_func') }}">
-<div class="card">
-  <div class="fold"></div>
-  <div class="fold"></div>
-  <div class="fold"></div>
-  <div class="fold"></div>
-  <div class="fold"></div>
-</div></a>
-<!-- partial -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-  document.body.classList.add('fade-out');
-});
 
-window.addEventListener('beforeunload', function() {
-  document.body.style.opacity = 0;
-});
+    <video autoplay playsinline muted loop class="background-video">
+        <source src="{{ url_for('static', filename='images/opening_bg.mp4') }}" type="video/mp4">
+    </video>
 
-window.addEventListener('load', function() {
-  document.body.style.opacity = 1;
-});
+    <div class="content-container">
+        <div class="headings">
+            <h1>Letsdress.Ai</h1>
+            <p>Your AI Fashion Studio</p>
+        </div>
+        
+        <a href="{{ url_for('read_more_func') }}" class="card-link">
+            <div class="card">
+                <div class="fold"></div>
+                <div class="fold"></div>
+                <div class="fold"></div>
+                <div class="fold"></div>
+                <div class="fold"></div>
+                <span class="enter-text">Enter</span>
+            </div>
+        </a>
+    </div>
 
-  </script>
 </body>
 </html>

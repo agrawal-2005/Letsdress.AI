@@ -3,18 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='flipkart-icon.ico') }}">
     <title>Feedback Form</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            border: 0;
+        }
 
         body {
-            font-family: Arial, sans-serif;
-            background-image: url('./static/images/bg_main.jpg');
+            font-family: 'Roboto', sans-serif;
+            background-image: url("{{ url_for('static', filename='images/bg_image.jpg') }}");
             background-repeat: no-repeat;
             background-attachment: fixed;
             background-size: cover;
             color: #fff;
-            margin: 0;
-            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -22,36 +27,38 @@
         }
 
         .container {
-            max-width: 800px;
-            width: 25%;
-            padding: 45px;
-            background-color: rgba(0, 0, 0, 0.8);
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-            animation: fadeIn 1s ease-in-out, slideIn 1s ease-in-out;
+            width: 90%;
+            max-width: 500px; /* Increased max-width for better spacing */
+            padding: 40px;
+            border-radius: 25px;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        .glass-effect {
+            background: rgba(30, 30, 30, 0.2);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
         }
 
         @keyframes fadeIn {
-            0% {
+            from {
                 opacity: 0;
                 transform: translateY(-20px);
             }
-            100% {
+            to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        @keyframes slideIn {
-            0% {
-                transform: translateX(-100%);
-            }
-            100% {
-                transform: translateX(0);
-            }
-        }
-
         h1 {
             text-align: center;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            font-weight: bold;
+            text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.3);
         }
 
         form {
@@ -59,100 +66,128 @@
             flex-direction: column;
         }
 
-        label {
-            margin-bottom: 5px;
-        }
-
-        input[type="text"],
-        textarea {
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            animation: fadeIn 1s ease-in-out;
-            transition: transform 0.2s ease-in-out;
-        }
-
-        input[type="text"]:focus,
-        textarea:focus {
+        input[type="text"] {
+            padding: 14px 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            font-size: 16px;
             outline: none;
-            border-color: #007bff;
-            transform: scale(1.02);
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            transition: all 0.3s ease;
         }
 
+        input[type="text"]::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
 
-        input[type="text"]:hover,
-        textarea:hover {
-            transform: scale(1.02);
+        input[type="text"]:focus {
+            border-color: #1e90ff;
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
         input[type="submit"] {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
+            padding: 14px 28px;
+            border-radius: 10px;
+            background-color: #1e90ff;
+            color: white;
             font-size: 16px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
             margin-top: 10px;
-            transition: background-color 0.3s;
-            animation: fadeIn 1s ease-in-out;
-        }
-
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateY(0);
-            }
-            40% {
-                transform: translateY(-15px);
-            }
-            60% {
-                transform: translateY(-10px);
-            }
         }
 
         input[type="submit"]:hover {
-            background-color: #0056b3;
+            background-color: #0b6fc2;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
         }
 
-
         .error {
+            border-color: #ff4d4d !important;
             animation: shake 0.5s ease-in-out;
         }
 
+        .error-message {
+            color: #ff4d4d;
+            font-size: 14px;
+            margin-top: -15px; /* Position it closer to the input field */
+            margin-bottom: 15px;
+            min-height: 20px; /* Prevent layout shift */
+        }
+
         @keyframes shake {
-            0%, 100% {
-                transform: translateX(0);
-            }
-            10%, 30%, 50%, 70%, 90% {
-                transform: translateX(-5px);
-            }
-            20%, 40%, 60%, 80% {
-                transform: translateX(5px);
-            }
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container glass-effect">
         <h1>Feedback Form</h1>
-        <form action="/form_send" method="post">
-            <input type="text" id="name" required="required" autocomplete="off" name="send_name" placeholder="Name" >
-            <input type="text" required="required" autocomplete="off" name="send_email" placeholder="Email Account" >
-            <input type="text" required="required" autocomplete="off" name="send_mess" placeholder="Your valuable feedback" >
-            <input type="submit" value="Submit" onclick="validateForm(event)">
+        <form id="feedbackForm" action="/form_send" method="post">
+            <input type="text" id="name" autocomplete="off" name="send_name" placeholder="Name" required>
+            <div class="error-message" id="nameError"></div>
+            
+            <input type="text" id="email" autocomplete="off" name="send_email" placeholder="Email Account" required>
+            <div class="error-message" id="emailError"></div>
+
+            <input type="text" id="message" autocomplete="off" name="send_mess" placeholder="Your valuable feedback" required>
+            <div class="error-message" id="messageError"></div>
+            
+            <input type="submit" value="Submit">
         </form>
     </div>
 
     <script>
-        function validateForm(event) {
-
-            var nameField = document.getElementById("name");
+        document.getElementById('feedbackForm').addEventListener('submit', function(event) {
+            let isValid = true;
+            
+            // Validate Name
+            const nameField = document.getElementById("name");
+            const nameError = document.getElementById("nameError");
             if (nameField.value.trim() === "") {
                 nameField.classList.add("error");
-                event.preventDefault();
+                nameError.textContent = "Name is required.";
+                isValid = false;
+            } else {
+                nameField.classList.remove("error");
+                nameError.textContent = "";
             }
-        }
+
+            // Validate Email
+            const emailField = document.getElementById("email");
+            const emailError = document.getElementById("emailError");
+            if (emailField.value.trim() === "") {
+                emailField.classList.add("error");
+                emailError.textContent = "Email is required.";
+                isValid = false;
+            } else {
+                emailField.classList.remove("error");
+                emailError.textContent = "";
+            }
+
+            // Validate Message
+            const messageField = document.getElementById("message");
+            const messageError = document.getElementById("messageError");
+            if (messageField.value.trim() === "") {
+                messageField.classList.add("error");
+                messageError.textContent = "Feedback message is required.";
+                isValid = false;
+            } else {
+                messageField.classList.remove("error");
+                messageError.textContent = "";
+            }
+
+            if (!isValid) {
+                event.preventDefault(); // Stop form submission if any field is invalid
+            }
+        });
     </script>
 </body>
 </html>

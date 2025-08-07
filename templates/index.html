@@ -5,12 +5,77 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='flipkart-icon.ico') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <title>FlipkartGrid 5.0</title>
     <style>
-        /* Your existing CSS styles */
+        :root {
+            --bg-black-100: #353535;
+            --bg-black-50: #eef0f4;
+            --bg-black-20: #414546;
+        }
 
-        /* Loading animation */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            border: 0;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            justify-content: center;
+            align-items: center; /* Center the main container */
+            background-image: url('./static/images/bg_image.jpg');
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            overflow: auto;
+        }
+
+        .main-container {
+            width: 80%;
+            max-width: 1200px;
+            padding: 40px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .page-logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+            margin-bottom: 20px;
+            background: -webkit-linear-gradient(75deg, #1a4f9c, #ffffff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            width: 100%;
+        }
+
+        body.dark {
+            --bg-black-100: #fff;
+            --bg-black-50: #000;
+            --bg-black-20: #eef0f4;
+        }
+
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -42,32 +107,11 @@
         }
 
         @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-    </style>
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Roboto';
-            font-size: 16px;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            justify-content: center;
-            background-image: url('./static/images/bg_main.jpg');
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-size: cover;
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .carousel {
-            /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); */
             padding: 20px;
             perspective: 500px;
             overflow: hidden;
@@ -75,22 +119,15 @@
             flex-direction: column;
             align-items: center;
             zoom: 1.2;
+            width: 100%;
+            margin-top: 30px;
         }
 
         .carousel>* {
-            /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); */
             flex: 0 0 auto;
         }
 
-        .carousel nav {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-            /* Add margin-bottom to create space between the search box and the image carousel */
-        }
-
         .carousel figure {
-            /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); */
             margin: 0;
             width: 550px;
             transform-style: preserve-3d;
@@ -100,7 +137,6 @@
             justify-content: center;
             align-items: center;
             margin-top: 5px;
-            /* Add margin-top to create space between the search box and the image carousel */
         }
 
         .carousel figure img {
@@ -118,420 +154,101 @@
             transform-origin: 50% 50% -482.8427124746px;
         }
 
-        .carousel figure img:nth-child(2) {
-            transform: rotateY(0.7853981634rad);
+        .carousel figure img:nth-child(2) { transform: rotateY(0.7853981634rad); }
+        .carousel figure img:nth-child(3) { transform: rotateY(1.5707963268rad); }
+        .carousel figure img:nth-child(4) { transform: rotateY(2.3561944902rad); }
+        .carousel figure img:nth-child(5) { transform: rotateY(3.1415926536rad); }
+        .carousel figure img:nth-child(6) { transform: rotateY(3.926990817rad); }
+        .carousel figure img:nth-child(7) { transform: rotateY(4.7123889804rad); }
+        .carousel figure img:nth-child(8) { transform: rotateY(5.4977871438rad); }
+
+        .menu {
+            position: absolute;
+            width: 60px;
+            height: 600px;
+            background-color: var(--bg-black-50);
+            z-index: 1001;
+            top: 0;
+            bottom: 0;
+            left: 10px;
+            margin: auto;
+            border-radius: 0.8rem;
+            transition: 0.3s ease 0.15s;
+            font-family: sans-serif;
         }
 
-        .carousel figure img:nth-child(3) {
-            transform: rotateY(1.5707963268rad);
+        .menu.open {
+            width: 240px;
+        }
+        
+        .menu a { text-decoration: none; }
+        .menu .actionbar { width: 100%; height: 10%; padding: 0.5rem; overflow: hidden; }
+        .menu .actionbar div { width: 100%; height: 100%; display: flex; align-items: center; justify-content: space-around; border-radius: 0.5rem; transition: 0.3s ease; }
+        .menu .actionbar div button { background-color: transparent; outline: none; border: none; border-radius: 0.5rem; color: var(--bg-black-100); width: 45px; height: 45px; transition: 0.3s ease; font-size: 1rem; }
+        .menu .actionbar div button:hover { background-color: rgb(132, 0, 255); }
+        .menu .actionbar div h3 { width: calc(100% - 45px); text-align: center; }
+        .menu .optionsBar { overflow: hidden; display: flex; width: 100%; height: 60%; padding: 0 0.5rem; align-items: center; flex-direction: column; }
+        .menu .optionsBar .menuItem { width: 100%; height: 45px; margin: 0.3rem; }
+        .menu .optionsBar .menuItem .menuOption { font-size: 1rem; outline: none; border: none; background-color: transparent; width: 100%; height: 100%; display: flex; align-items: center; justify-content: space-around; border-radius: 0.5rem; transition: 0.3s ease; }
+        .menu .optionsBar .menuItem .menuOption:hover { background-color: rgb(132, 0, 255); }
+        .menu .optionsBar .menuItem .menuOption i { width: 45px; text-align: center; color: var(--bg-black-100); }
+        .menu .optionsBar .menuItem .menuOption h5 { width: calc(100% - 45px); }
+        .menuText { color: var(--bg-black-20); transform: translateX(-250px); opacity: 0; transition: transform 0.3s ease 0.1s; }
+        .menuText.open2 { opacity: 1; transform: translateX(0); }
+        .menu .menuUser { width: 100%; height: 10px; padding: 4.5rem 0 3rem 0; }
+        .menu .menuUser a { width: 100%; height: 100%; display: flex; align-items: center; justify-content: space-between; text-decoration: none; padding: 0.5rem; position: relative; }
+        .menu .menuUser a div { width: 45px; height: 45px; position: relative; border-radius: 0.5rem; }
+        .menu .menuUser a div img { width: 100%; height: 100%; object-fit: cover; border-radius: 0.5rem; }
+        .menu .menuUser a .Username { width: calc(70% - 45px); }
+        .menu .menuUser a p { width: calc(30% - 45px); }
+        .menu .themeBar { overflow: hidden; width: 100%; height: 10%; padding: 0.5rem; }
+        .menu .themeBar div { width: 100%; height: 100%; display: flex; align-items: center; justify-content: space-around; border-radius: 0.5rem; transition: 0.3s ease; }
+        .menu .themeBar div button { background-color: transparent; outline: none; border: none; border-radius: 0.5rem; color: var(--bg-black-100); width: 100%; height: 45px; transition: 0.3s ease; font-size: 1rem; background-color: rgb(132, 0, 255); }
+        .menu .optionsBar .menuItem .menuOption:hover .menuText, .menu .optionsBar .menuItem .menuOption:hover i, .menu .actionbar div button:hover i, .menu .themeBar div button:hover i { color: #fff; }
+        .center-container { display: flex; justify-content: center; align-items: flex-start; width: 100%; margin-bottom: 15px; }
+        .search-form { display: flex; justify-content: center; align-items: center; }
+        .search-container { display: flex; align-items: center; position: relative; }
+        .search-container input[type="text"] { padding: 12px 16px; width: 600px; border: 1px solid #ccc; border-radius: 10px; font-size: 16px; outline: none; }
+        .search-container button[type='submit'] { margin-left: 12px; padding: 12px 28px; border-radius: 10px; background-color: #1e90ff; color: white; font-size: 16px; font-weight: 600; border: none; cursor: pointer; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); transition: all 0.3s ease; }
+        .search-container button[type='submit']:hover { background-color: #0b6fc2; transform: translateY(-1px); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); }
+
+        .flipkart-logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 150px;
+            z-index: 1000;
         }
 
-        .carousel figure img:nth-child(4) {
-            transform: rotateY(2.3561944902rad);
+        .flipkart-grid-logo {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            z-index: 1000;
         }
 
-        .carousel figure img:nth-child(5) {
-            transform: rotateY(3.1415926536rad);
+        .error-message {
+            color: #ff4d4d;
+            background-color: rgba(255, 0, 0, 0.1);
+            border: 1px solid #ff4d4d;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            font-weight: bold;
         }
 
-        .carousel figure img:nth-child(6) {
-            transform: rotateY(3.926990817rad);
-        }
-
-        .carousel figure img:nth-child(7) {
-            transform: rotateY(4.7123889804rad);
-        }
-
-        .carousel figure img:nth-child(8) {
-            transform: rotateY(5.4977871438rad);
-        }
-
-        /* .carousel nav {
-      display: flex;
-      justify-content: center;
-      margin: 20px 0 0;
-    } */
     </style>
 </head>
-<style>
-    :root {
-        --bg-black-100: #353535;
-        --bg-black-50: #eef0f4;
-        --bg-black-20: #414546;
-    }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        overflow: auto;
-    }
-
-    body.dark {
-        --bg-black-100: #fff;
-        --bg-black-50: #000;
-        --bg-black-20: #eef0f4;
-    }
-
-    .menu {
-        position: absolute;
-        width: 60px;
-        height: 600px;
-        background-color: var(--bg-black-50);
-        z-index: 2;
-        top: 0;
-        bottom: 0;
-        left: 10px;
-        margin: auto;
-        border-radius: 0.8rem;
-        transition: 0.3s ease 0.15s;
-        font-family: sans-serif;
-    }
-
-    .menu.open {
-        width: 240px;
-    }
-
-    .menu a {
-        text-decoration: none;
-    }
-
-    .menu .actionbar {
-        width: 100%;
-        height: 10%;
-        padding: 0.5rem;
-        overflow: hidden;
-    }
-
-    .menu .actionbar div {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
-        border-radius: 0.5rem;
-        transition: 0.3s ease;
-    }
-
-    .menu .actionbar div button {
-        background-color: transparent;
-        outline: none;
-        border: none;
-        border-radius: 0.5rem;
-        color: var(--bg-black-100);
-        width: 45px;
-        height: 45px;
-        transition: 0.3s ease;
-        font-size: 1rem;
-    }
-
-    .menu .actionbar div button:hover {
-        background-color: rgb(132, 0, 255);
-    }
-
-    .menu .actionbar div h3 {
-        width: calc(100% - 45px);
-        text-align: center;
-    }
-
-    .menu .optionsBar {
-        overflow: hidden;
-        display: flex;
-        width: 100%;
-        height: 60%;
-        padding: 0 0.5rem;
-        align-items: center;
-        flex-direction: column;
-    }
-
-    .menu .optionsBar .menuItem {
-        width: 100%;
-        height: 45px;
-        margin: 0.3rem;
-    }
-
-    .menu .optionsBar .menuItem .menuOption {
-        font-size: 1rem;
-        outline: none;
-        border: none;
-        background-color: transparent;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
-        border-radius: 0.5rem;
-        transition: 0.3s ease;
-    }
-
-    .menu .optionsBar .menuItem .menuOption:hover {
-        background-color: rgb(132, 0, 255);
-    }
-
-    .menu .optionsBar .menuItem .menuOption i {
-        width: 45px;
-        text-align: center;
-        color: var(--bg-black-100);
-    }
-
-    .menu .optionsBar .menuItem .menuOption h5 {
-        width: calc(100% - 45px);
-    }
-
-    .menuText {
-        color: var(--bg-black-20);
-        transform: translateX(-250px);
-        opacity: 0;
-        transition: transform 0.3s ease 0.1s;
-    }
-
-    .menuText.open2 {
-        opacity: 1;
-        transform: translateX(0);
-    }
-
-    .menu .menuBreak {
-        width: 100%;
-        height: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .menu .menuBreak hr {
-        width: 50%;
-        height: 3px;
-        background-color: var(--bg-black-100);
-        border: none;
-        border-radius: 5px;
-    }
-
-    .menu .menuUser {
-        width: 100%;
-        height: 10px;
-        padding: 4.5rem 0 3rem 0;
-    }
-
-    .menu .menuUser a {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        text-decoration: none;
-        padding: 0.5rem;
-        position: relative;
-    }
-
-    .menu .menuUser a div {
-        width: 45px;
-        height: 45px;
-        position: relative;
-        border-radius: 0.5rem;
-    }
-
-    .menu .menuUser a div img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 0.5rem;
-    }
-
-    .menu .menuUser a .Username {
-        width: calc(70% - 45px);
-    }
-
-    .menu .menuUser a p {
-        width: calc(30% - 45px);
-    }
-
-    .menu .menuUser a:hover p {
-        animation: animArrow 0.3s ease 2;
-    }
-
-    @keyframes animArrow {
-        0% {
-            transform: translateX(0);
-        }
-
-        50% {
-            transform: translateX(5px);
-        }
-
-        100% {
-            transform: translateX(0);
-        }
-    }
-
-    .menu .menuUser .userInfo {
-        position: absolute;
-        width: 10rem;
-        height: 8rem;
-        opacity: 0;
-        color: var(--bg-black-50);
-        pointer-events: none;
-        top: 58%;
-        left: 1.5rem;
-        transition: 0.3s ease;
-        transform: scale(0);
-        transform-origin: bottom left;
-    }
-
-    .menu .menuUser .userInfo div {
-        position: relative;
-        width: 100%;
-        height: calc(100% - 20px);
-        box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.3);
-        background-color: var(--bg-black-100);
-        border-top-left-radius: 1rem;
-        border-top-right-radius: 1rem;
-        border-bottom-right-radius: 1rem;
-        padding: 1rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
-        flex-direction: column;
-    }
-
-    .menu .menuUser .userInfo div h1 {
-        font-size: 4rem;
-    }
-
-    .menu .menuUser .userInfo div::before {
-        content: '';
-        position: absolute;
-        bottom: -18px;
-        left: -2px;
-        width: 0;
-        height: 0;
-        border-top: 15px solid transparent;
-        border-bottom: 15px solid transparent;
-        border-right: 15px solid var(--bg-black-100);
-        transform: rotate(45deg);
-    }
-
-    .menu .menuUser:hover .userInfo {
-        pointer-events: all;
-        opacity: 1;
-        transform: scale(1);
-    }
-
-    .menu .themeBar {
-        overflow: hidden;
-        width: 100%;
-        height: 10%;
-        padding: 0.5rem;
-    }
-
-    .menu .themeBar div {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
-        border-radius: 0.5rem;
-        transition: 0.3s ease;
-    }
-
-    .menu .themeBar div button {
-        background-color: transparent;
-        outline: none;
-        border: none;
-        border-radius: 0.5rem;
-        color: var(--bg-black-100);
-        width: 100%;
-        height: 45px;
-        transition: 0.3s ease;
-        font-size: 1rem;
-    }
-
-    .menu .themeBar div button {
-        background-color: rgb(132, 0, 255);
-    }
-
-    .menu .optionsBar .menuItem .menuOption:hover .menuText,
-    .menu .optionsBar .menuItem .menuOption:hover i,
-    .menu .actionbar div button:hover i,
-    .menu .themeBar div button:hover i {
-        color: #fff;
-    }
-
-    .center-container {
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        height: 5vh;
-        width: 100%;
-        margin-bottom: 15px;
-    }
-
-    .search-form {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .search-container {
-        display: flex;
-        align-items: center;
-        position: relative;
-    }
-
-    .search-container input[type="text"] {
-        padding: 12px 16px;
-        width: 600px;
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        font-size: 16px;
-        outline: none;
-    }
-
-    .search-container button[type='submit'] {
-        margin-left: 12px;
-        padding: 12px 28px;
-        border-radius: 10px;
-        background-color: #1e90ff;
-        color: white;
-        font-size: 16px;
-        font-weight: 600;
-        border: none;
-        cursor: pointer;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        transition: all 0.3s ease;
-    }
-
-    .search-container button[type='submit']:hover {
-        background-color: #0b6fc2;
-        transform: translateY(-1px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    }
-
-
-    * {
-        border: 0;
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
-</style>
 
 <body>
     <div class="loading-overlay">
         <div class="loading-spinner"></div>
     </div>
-    <!-- Centered Search Form -->
-    <div class="center-container">
-        <form class="search-form" action="{{ url_for('fetch') }}" method="post">
-            <div class="search-container">
-                <input type="text" name="search_bttn" autocomplete="off" placeholder="Describe your Imagination..." />
-                <button type="submit">Explore</button>
-            </div>
-        </form>
-    </div>
-
+    
     <nav id="menu" class="menu">
         <div class="actionbar">
             <div>
@@ -548,18 +265,14 @@
                     <h5 class="menuText">Home</h5>
                 </button>
             </li>
-
             <li class="menuItem">
-                <button id="productManagerBtn" class="menuOption"
-                    onclick="location.href='https://www.bing.com/shop?q=best+trending+outfits&FORM=SHOPTB'">
+                <button id="productManagerBtn" class="menuOption" onclick="location.href='https://www.bing.com/shop?q=best+trending+outfits&FORM=SHOPTB'">
                     <i class="fas fa-shopping-bag"></i>
                     <h5 class="menuText">Trending</h5>
                 </button>
             </li>
-
             <li class="menuItem">
-                <button id="constantManagerBtn" class="menuOption"
-                    onclick="location.href='https://www.flipkart.com/offers-store'">
+                <button id="constantManagerBtn" class="menuOption" onclick="location.href='https://www.flipkart.com/offers-store'">
                     <i class="fas fa-border-all"></i>
                     <h5 class="menuText">Explore offers</h5>
                 </button>
@@ -588,175 +301,167 @@
             </div>
         </div>
     </nav>
-    <div class="carousel">
-        <figure>
-            <img src="/static/images/image1.png" alt="">
-            <img src="/static/images/image2.png" alt="">
-            <img src="/static/images/image3.png" alt="">
-            <img src="/static/images/image4.png" alt="">
-            <img src="/static/images/image5.png" alt="">
-            <img src="/static/images/image6.png" alt="">
-            <img src="/static/images/image7.png" alt="">
-            <img src="/static/images/image8.png" alt="">
-        </figure>
+
+    <div class="main-container glass-effect">
+
+        {% if error %}
+        <div class="error-message">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <img src="https://static-assets-web.flixcart.com/batman-returns/batman-returns/p/images/fkheaderlogo_exploreplus-44005d.svg" alt="Flipkart Logo" class="flipkart-logo">
+        <img src="https://d8it4huxumps7.cloudfront.net/uploads/images/150x150/uploadedManual-6481725a0cb28_logo__3_.png?d=200x200" alt="Flipkart GRID Logo" class="flipkart-grid-logo">
+        <h1 class="page-logo">Flipkart Grid 5.0</h1>
+        
+        <div class="center-container">
+            <form class="search-form" action="{{ url_for('fetch') }}" method="post">
+                <div class="search-container">
+                    <input type="text" name="search_bttn" autocomplete="off" placeholder="Describe your Imagination..." />
+                    <button type="submit">Explore</button>
+                </div>
+            </form>
+        </div>
+    
+        <div class="carousel">
+            <figure>
+                <img src="/static/images/image1.png" alt="">
+                <img src="/static/images/image2.png" alt="">
+                <img src="/static/images/image3.png" alt="">
+                <img src="/static/images/image4.png" alt="">
+                <img src="/static/images/image5.png" alt="">
+                <img src="/static/images/image6.png" alt="">
+                <img src="/static/images/image7.png" alt="">
+                <img src="/static/images/image8.png" alt="">
+            </figure>
+        </div>
     </div>
+
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-        // Show loading overlay when a link is clicked
-        const links = document.querySelectorAll('a');
-        links.forEach(link => {
-            link.addEventListener('click', () => {
-                const loadingOverlay = document.querySelector('.loading-overlay');
-                loadingOverlay.classList.add('active');
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingOverlay = document.querySelector('.loading-overlay');
+            const links = document.querySelectorAll('a');
+
+            links.forEach(link => {
+                link.addEventListener('click', () => {
+                    loadingOverlay.classList.add('active');
+                });
+            });
+
+            window.addEventListener('pageshow', function(event) {
+                if (event.persisted) {
+                    loadingOverlay.classList.remove('active');
+                }
+            });
+
+            window.addEventListener('load', () => {
+                loadingOverlay.classList.remove('active');
             });
         });
 
-        // Hide loading overlay when the page finishes loading
-        window.addEventListener('load', () => {
-            const loadingOverlay = document.querySelector('.loading-overlay');
-            loadingOverlay.classList.remove('active');
-        });
-    </script>
-    <script>
-        window.onload = () => {
-            const loadingScreen = document.getElementById('loading-screen');
-            if (loadingScreen) {
-                loadingScreen.style.display = 'none';
-            }
-        };
-
-        // 3D Carousel Interactivity
-        var carousel = document.querySelector('.carousel')
-        var figure = carousel.querySelector('figure')
-        var numImages = figure.childElementCount
-        var theta = Math.PI / numImages
-        var currImage = 0
-
-        function scrollCarousel(direction) {
-            if (direction === 'next') {
-                currImage++;
-            }
-            else currImage--;
-
-            const reducedSpeed = 0.1;
-            figure.style.transform = `rotateY(${currImage * -theta * reducedSpeed}rad)`;
-        }
-
-        // Wheel event (Desktop)
-        carousel.addEventListener('wheel', function (e) {
-            e.preventDefault();
-            var direction = e.deltaY > 0 ? 'next' : 'prev';
-            scrollCarousel(direction);
-        });
-
-        // Touch events (Mobile)
+        const carousel = document.querySelector('.carousel');
+        const figure = carousel.querySelector('figure');
+        const numImages = figure.childElementCount;
+        const theta = 360 / numImages;
+        let currImage = 0;
+        
+        let scrollAccumulator = 0;
+        const scrollThreshold = 100;
         let touchStartX = null;
+        const touchThreshold = 50;
 
-        function handleTouchStart(e) {
-            touchStartX = e.touches[0].clientX;
+        function rotateCarousel() {
+             figure.style.transform = `rotateY(${currImage * -theta}deg)`;
         }
 
-        function handleTouchMove(e) {
+        carousel.addEventListener('wheel', function(e) {
             e.preventDefault();
-        }
+            scrollAccumulator += e.deltaY;
 
-        function handleTouchEnd(e) {
+            if (Math.abs(scrollAccumulator) >= scrollThreshold) {
+                if (scrollAccumulator > 0) {
+                    currImage++;
+                } else {
+                    currImage--;
+                }
+                rotateCarousel();
+                scrollAccumulator = 0;
+            }
+        });
+
+        carousel.addEventListener('touchstart', function(e) {
+            touchStartX = e.touches[0].clientX;
+        }, { passive: true });
+
+        carousel.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+        
+        carousel.addEventListener('touchend', function(e) {
+            if (touchStartX === null) return;
             const touchEndX = e.changedTouches[0].clientX;
-            const threshold = 30;
-
-            if (touchStartX == null) return;
-
             const deltaX = touchEndX - touchStartX;
 
-            if (Math.abs(deltaX) > threshold) {
-                const direction = deltaX > 0 ? 'prev' : 'next';
-                scrollCarousel(direction);
+            if (Math.abs(deltaX) > touchThreshold) {
+                if (deltaX < 0) {
+                    currImage++;
+                } else {
+                    currImage--;
+                }
+                rotateCarousel();
             }
-
             touchStartX = null;
-        }
+        });
 
-        carousel.removeEventListener('touchStart', handleTouchStart);
-        carousel.removeEventListener('touchmove', handleTouchMove, { passive: false });
-        carousel.removeEventListener('touchend', handleTouchEnd);
-
-        // toggle menu
         const menuBtn = document.getElementById('menuBtn');
         const menu = document.getElementById('menu');
         const menuText = document.querySelectorAll('.menuText');
 
         menuBtn.addEventListener('click', () => {
             menu.classList.toggle('open');
-            menuText.forEach(function (text, index) {
+            menuText.forEach(function(text, index) {
                 setTimeout(() => {
                     text.classList.toggle('open2');
                 }, index * 50);
             })
         })
-        $(document).on('click', function (e) {
-            if ($(e.target).closest('#menu').length === 2) {
+
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('#menu').length) {
                 menu.classList.remove('open');
-                menuText.forEach(function (text, index) {
-                    setTimeout(() => {
-                        text.classList.toggle('open2');
-                    }, index * 50);
+                menuText.forEach(function(text) {
+                    text.classList.remove('open2');
                 })
             }
         })
 
-        // dark light mode
         const dayNight = document.querySelector('#themeChangeBtn');
         dayNight.addEventListener("click", () => {
             document.body.classList.toggle("dark");
-            if (document.body.classList.contains("dark")) {
-                localStorage.setItem("theme", "dark");
-            }
-            else {
-                localStorage.setItem("theme", "light");
-            }
+            localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
             updateIcon();
         })
+
         function themeMode() {
-            if (localStorage.getItem("theme") !== null) {
-                if (localStorage.getItem("theme") === "light") {
-                    document.body.classList.remove("dark");
-                }
-                else {
-                    document.body.classList.add("dark");
-                }
+            if (localStorage.getItem("theme") === "dark") {
+                document.body.classList.add("dark");
             }
             updateIcon();
         }
         themeMode();
+
         function updateIcon() {
+            const icon = dayNight.querySelector("i");
             if (document.body.classList.contains("dark")) {
-                dayNight.querySelector("i").classList.remove("fa-moon");
-                dayNight.querySelector("i").classList.add("fa-sun");
-            }
-            else {
-                dayNight.querySelector("i").classList.remove("fa-sun");
-                dayNight.querySelector("i").classList.add("fa-moon");
+                icon.classList.remove("fa-moon");
+                icon.classList.add("fa-sun");
+            } else {
+                icon.classList.remove("fa-sun");
+                icon.classList.add("fa-moon");
             }
         }
-
     </script>
-    <!-- <script>
-        // Show loading overlay when a link is clicked
-        const Footerlinks = document.querySelectorAll('a');
-        links.forEach(link => {
-            link.addEventListener('click', () => {
-                const loadingOverlay = document.querySelector('.loading-overlay');
-                loadingOverlay.classList.add('active');
-            });
-        });
-
-        // Hide loading overlay when the page finishes loading
-        window.addEventListener('load', () => {
-            const loadingOverlay = document.querySelector('.loading-overlay');
-            loadingOverlay.classList.remove('active');
-        });
-    </script> -->
 </body>
-
 </html>

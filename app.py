@@ -1,6 +1,5 @@
-from flask import Flask, url_for, redirect, request, render_template, Response;
+from flask import Flask, request, render_template
 import os
-import PIL
 from PIL import Image
 import requests
 import io
@@ -9,68 +8,92 @@ import smtplib
 from dotenv import load_dotenv
 load_dotenv()
 
-API_TOKEN = os.getenv("API_TOKEN")
-API_URL = os.getenv("API_URL")
-headers = {"Authorization": f"Bearer {API_TOKEN}"}
+# Use the new environment variable for the Stability AI key
+STABILITY_API_KEY = os.getenv("STABILITY_API_KEY")
+API_URL = "https://api.stability.ai/v2beta/stable-image/generate/core" # Using Stable Image Core
 
 app = Flask(__name__)
-def save_database(image, text_data):
-    def convert_image_into_binary(filename):
-        with open(filename, 'rb') as file:
-            photo_image = file.read()
-        return photo_image
-    
-    def insert_image(image):
-        image_database = sqlite3.connect("./database/Image_data.db")
-        data = image_database.cursor()
-        insert_photo = convert_image_into_binary(image)
-        data.execute("INSERT INTO Image (Image, text_feature) VALUES (:image, :text)", {'image': insert_photo, 'text': text_data})
-        image_database.commit()
-        image_database.close()
 
-    def create_database():
-        image_database = sqlite3.connect("./database/Image_data.db")
-        data = image_database.cursor()
-        data.execute("CREATE TABLE IF NOT EXISTS Image(Image BLOB, text_feature TEXT)")
-        image_database.commit()
-        image_database.close()
-    
+def save_database(image_path, text_data):
+    """Saves the image path and its text description to the database."""
+    def get_image_as_binary(filepath):
+        with open(filepath, 'rb') as file:
+            return file.read()
+
+    db_path = "./database/Image_data.db"
+    conn = None
     try:
-        create_database()
-        insert_image(image)
-    except Exception as e:
-        return str(e)
-
-# generate_image("male traditional")
-def uniquify(path):
-    filename, extension = os.path.splitext(path)
-    counter = 1
-    while os.path.exists(path):
-        path = f"{filename} ({counter}){extension}"
-        counter += 1
-    return path
+        os.makedirs(os.path.dirname(db_path), exist_ok=True)
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        cursor.execute("CREATE TABLE IF NOT EXISTS Image(Image BLOB, text_feature TEXT)")
+        image_binary = get_image_as_binary(image_path)
+        cursor.execute("INSERT INTO Image (Image, text_feature) VALUES (?, ?)", (image_binary, text_data))
+        conn.commit()
+        print(f"Successfully saved {image_path} to the database.")
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+    except IOError as e:
+        print(f"File error: {e}")
+    finally:
+        if conn:
+            conn.close()
 
 def generate_image(prop):
-    def query(payload):
-        response = requests.post(API_URL, headers=headers, json=payload)
-        print(response.status_code)
-        print(response.headers)
-        print(response.content[:500])
-        return response.content
-
+    """Generates images using the Stable Image Core API with correct formatting."""
     try:
-        for i in range(1, 9):  # range(1, 9) was wrong. It doesn’t run 9
-            user_input = f"{prop} outfit {i}"
-            image_bytes = query({"inputs": user_input})
-            image = Image.open(io.BytesIO(image_bytes))
+        for i in range(1, 9):
+            user_input = f"{prop}, high quality photography"
+            print(f"Generating image {i} with prompt: '{user_input}'")
+
+            # --- *** KEY CORRECTIONS ARE HERE *** ---
+            response = requests.post(
+                API_URL,
+                headers={
+                    "authorization": f"Bearer {STABILITY_API_KEY}",
+                    "accept": "image/*"  # We want the image bytes directly
+                },
+                # Use files to indicate a multipart/form-data request
+                files={"none": ''},
+                # Use data for form fields, not json
+                data={
+                    "prompt": user_input,
+                    "output_format": "png",
+                    # Optional: Add a style for better results
+                    "style_preset": "photographic",
+                },
+                timeout=60
+            )
+            # --- *** END OF CORRECTIONS *** ---
+
+            response.raise_for_status()
+
+            image = Image.open(io.BytesIO(response.content))
             image_path = f"./static/images/image{i}.png"
-            unique_path = uniquify(image_path)
-            image.save(unique_path)
-            print(f"Image saved as {unique_path}")
-            save_database(unique_path, prop)
+            image.save(image_path)
+            print(f"Image saved as {image_path}")
+            save_database(image_path, prop)
+        
+        return None # Success
+
+    except requests.exceptions.HTTPError as e:
+        error_details = "Unknown error"
+        try:
+            # Try to parse the JSON error response from Stability AI
+            error_details = e.response.json()
+        except ValueError:
+            error_details = e.response.text
+
+        print(f"API Error: {error_details}")
+        # Provide a more user-friendly message
+        message = f"API Error ({e.response.status_code}): Please check the server logs for details."
+        if e.response.status_code == 401:
+            message = "Authentication error: Please check your API key."
+        return message
+        
     except Exception as e:
-        print(f"Error generating image: {e}")
-        return str(e)
+        print(f"An unexpected error occurred: {e}")
+        return "An unexpected error occurred. Please check the server logs."
 
 @app.route('/')
 def index():
@@ -82,34 +105,45 @@ def read_more_func():
 
 @app.route('/form_register', methods=['POST'])
 def fetch():
+    error_message = None
     if request.method == 'POST':
-        try:
-            req = request.form.get('search_bttn')
-            if not req:
-                return "Error: No prompt provided", 400
-            print(req)
-            generate_image(req)
-            return render_template('index.html')
-        except Exception as e:
-            return str(e)
+        req = request.form.get('search_bttn')
+        if not req:
+            error_message = "Please enter a description for the image."
+        else:
+            print(f"Received search request: {req}")
+            error_message = generate_image(req)
+            
+    # Always render the template, passing an error message if one occurred
+    return render_template('index.html', error=error_message)
 
-@app.route('/form_send', methods=['GET', 'POST'])
+@app.route('/form_send', methods=['POST'])
 def send():
-    send_user=request.form['send_name']
-    send_gmail=request.form['send_email']
-    send_mess=request.form['send_mess']
-    print(send_user, send_gmail, send_mess)
-    send = os.getenv("GMAIL")
-    rec = os.getenv("GMAIL")
-    pas = os.getenv("GMAIL_PASSWORD")
-    message = f"Subject: {send_gmail}\n\nMR/MRS {send_user} messaged you: {send_mess}"
-    server = smtplib.SMTP('smtp.gmail.com', 587)
-    server.starttls()
-    server.login(send, pas)
-    server.sendmail(send, rec, message)
-    return render_template('feedback.html')
+    try:
+        send_user = request.form['send_name']
+        send_gmail = request.form['send_email']
+        send_mess = request.form['send_mess']
+        
+        send_from = os.getenv("GMAIL")
+        recipient = os.getenv("GMAIL")
+        password = os.getenv("GMAIL_PASSWORD")
+        
+        if not all([send_from, recipient, password]):
+            return "Server email configuration is incomplete.", 500
 
-@app.route('/contact_us', methods=['GET', 'POST'])
+        message = f"Subject: New Feedback from {send_user}\n\nEmail: {send_gmail}\nMessage: {send_mess}"
+        
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(send_from, password)
+            server.sendmail(send_from, recipient, message)
+            
+        return render_template('feedback.html')
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+        return "An error occurred while sending feedback.", 500
+
+@app.route('/contact_us', methods=['GET'])
 def contact_us():
     return render_template('feedback.html')
 
