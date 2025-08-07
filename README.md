@@ -121,11 +121,12 @@ Visit: `http://localhost:5000`
 
 ---
 
-## 📸 Screenshots
+## 📸 UI Preview
 
-| Startup Page                 | Results                                         |
-| ---------------------------- | ----------------------------------------------- |
-| ![Startup](startup-page.png) | ![Result1](result.png) ![Result2](result-1.png) |
+| Startup Page                        | Results Output                                            |
+| ----------------------------------- | --------------------------------------------------------- |
+| ![Startup](startup-page.png)        | ![Result1](result.png) ![Result2](prompt-based-image.png) |
+| ![Feedback Form](feedback_form.png) |                                                           |
 
 ---
 
