@@ -1,6 +1,12 @@
 # 👗 Letsdress.AI – AI-Powered Fashion Personalization Tool
 
-**Letsdress.AI** is a fashion-enhancement AI tool that recommends personalized clothing styles using image generation and prompt-based interaction. It combines the power of Stable Diffusion with a clean, modern UI for an intuitive user experience.
+<p align="center">
+<img src="https://img.shields.io/badge/Python-3.9%2B-blue?style=for-the-badge&logo=python" alt="Python Version">
+<img src="https://img.shields.io/badge/Flask-2.x-black?style=for-the-badge&logo=flask" alt="Flask Version">
+<img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
+</p>
+
+**Letsdress.AI** is a smart fashion personalization tool that uses generative AI to turn your clothing ideas into high-quality images. It combines the power of Stability AI's models with a clean, modern interface, allowing you to visualize unique outfits in real-time.
 
 ---
 
@@ -66,6 +72,8 @@ Letsdress.AI/
 2. **Image Generation**: Prompt sent to the backend → Stable Diffusion generates visuals
 3. **Storage**: Images saved in `static/images/` and logged in SQLite DB
 4. **Display**: Results rendered dynamically on the web UI
+5. **Database Logging**: A reference to the image and its corresponding prompt is stored in the SQLite database.
+6. **Image Storage**: The generated image is saved to the /static/images/ directory, overwriting one of the placeholder images to update the carousel.
 
 ---
 
@@ -125,8 +133,7 @@ Visit: `http://localhost:5000`
 
 | Startup Page                        | Results Output                                            |
 | ----------------------------------- | --------------------------------------------------------- |
-| ![Startup](startup-page.png)        | ![Result1](result.png) ![Result2](prompt-based-image.png) |
-| ![Feedback Form](feedback_form.png) |                                                           |
+| ![Startup](startup-page.png) ![Feedback Form](feedback_form.png) | ![Result1](result.png) ![Result2](prompt-based-image.png) |
 
 ---
 
